@@ -15,7 +15,8 @@ RUN apt-add-repository "deb https://apt.kitware.com/ubuntu/ `lsb_release -cs` ma
 #RUN apt-get install -y kitware-archive-keyring 
 #RUN apt-key --keyring /etc/apt/trusted.gpg del C1F34CDD40CD72DA
 
-RUN apt-get update
+RUN add-apt-repository ppa:timsc/swig-3.0.12
+RUN apt-get update -y
 
 RUN apt-get install -y lsb-release \
         git \
@@ -23,11 +24,12 @@ RUN apt-get install -y lsb-release \
         cmake \
         clang \
         ccache \
-        swig3.0
+        swig \
+        autoconf
      
 # opencv
-RUN apt-get install -y libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev \
-    libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev  libdc1394-22-dev
+#RUN apt-get install -y libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev \
+#    libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev  libdc1394-22-dev
 
 RUN apt-get install -y python3 python3-dev
 
@@ -37,31 +39,31 @@ RUN apt-get install -y git libeigen3-dev libace-dev libedit-dev
 RUN apt-get install -y qtbase5-dev qtdeclarative5-dev qtmultimedia5-dev \
   qml-module-qtquick2 qml-module-qtquick-window2 \
   qml-module-qtmultimedia qml-module-qtquick-dialogs \
-  qml-module-qtquick-controls
+  qml-module-qtquick-controls \
+  libace-dev libeigen3-dev
 
 # Support  HW Acceleration for Intel gpu
 RUN apt-get install -y \
         libgl1-mesa-glx \
         libgl1-mesa-dri \
         mesa-utils
+RUN apt-get install -y libglu1-mesa-dev freeglut3-dev mesa-common-dev  libwebp-dev libtiff5-dev
+RUN apt-get install -y mesa-utils freeglut3 libode-dev libsdl1.2-dev libgtk2.0-dev
 
 # icub sim dependecies
 RUN apt-get install -y  coinor-libipopt-dev libgsl0-dev freeglut3-dev
 
 # opencv dependencies
-RUN apt-get install -y libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev \
-    libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev  libdc1394-22-dev  libpopt-dev
+RUN apt-get install -y libjpeg8-dev libtiff5-dev libjasper-dev libpng12-dev
+RUN apt-get install -y libavcodec-dev libavformat-dev libswscale-dev libv4l-dev
+RUN apt-get install -y libxvidcore-dev libx264-dev libgtk-3-dev
+RUN apt-get install -y libatlas-base-dev gfortran
 
-
-#RUN apt-get install -y python3-virtualenv
-#ENV VIRTUAL_ENV=/icub-py3-env
-#RUN python3 -m virtualenv --python=/usr/bin/python3 $VIRTUAL_ENV
-#ENV PATH="$VIRTUAL_ENV/bin:$PATH"
-
-RUN pip3 install numpy scipy matplotlib scikit-image scikit-learn ipython 
+RUN pip3 install numpy scipy matplotlib scikit-image scikit-learn ipython
 
 
 RUN mkdir /projects
+
 RUN cd /projects && git clone https://github.com/opencv/opencv.git && cd opencv && git checkout 3.4.10
 RUN cd /projects && git clone https://github.com/opencv/opencv_contrib.git && cd opencv_contrib && git checkout 3.4.10
 RUN cd /projects/opencv && \
@@ -88,39 +90,41 @@ RUN ldconfig
 
 # YARP
 RUN cd /projects && \ 
-    git clone https://github.com/robotology/yarp.git -b v3.3.1 && cd yarp && \
+    git clone https://github.com/robotology/yarp.git -b v3.3.2 && cd yarp && \
     #git checkout $GIT_BRANCH && \
-    #git checkout -b v3.3.0 \
+   # git checkout -b v3.3.2 \
     mkdir build && cd build && \
-    cmake -DCMAKE_BUILD_TYPE=Release \
+    cmake \
+      -DCMAKE_BUILD_TYPE=Release \
       -DCREATE_DEVICE_LIBRARY_MODULES=ON \
       -DCMAKE_INSTALL_PREFIX=./install \
       -DYARP_COMPILE_GUIS=ON \
       -DYARP_COMPILE_libYARP_math=ON \
-      -DYARP_COMPILE_CARRIER_PLUGINS=ON \
+#      -DYARP_COMPILE_CARRIER_PLUGINS=ON \
       -DYARP_COMPILE_BINDINGS=ON \
       -DYARP_USE_PYTHON_VERSION=3 \
       -DCREATE_PYTHON=ON \
-      -DENABLE_yarpcar_bayer=ON \
-      -DENABLE_yarpcar_mjpeg=ON \
-      -DENABLE_yarpmod_opencv_grabber=ON \
-      -DENABLE_yarpmod_serial=ON \
-      -DENABLE_yarpmod_serialport=ON \
+#      -DENABLE_yarpcar_bayer=ON \
+#      -DENABLE_yarpcar_mjpeg=ON \
+#      -DENABLE_yarpmod_opencv_grabber=ON \
+#      -DENABLE_yarpmod_serial=ON \
+#      -DENABLE_yarpmod_serialport=ON \
       .. && \
-     cmake -DCMAKE_BUILD_TYPE=Release \
+     cmake \
+      -DCMAKE_BUILD_TYPE=Release \
       -DCREATE_DEVICE_LIBRARY_MODULES=ON \
       -DCMAKE_INSTALL_PREFIX=./install \
       -DYARP_COMPILE_GUIS=ON \
       -DYARP_COMPILE_libYARP_math=ON \
-      -DYARP_COMPILE_CARRIER_PLUGINS=ON \
+#      -DYARP_COMPILE_CARRIER_PLUGINS=ON \
       -DYARP_USE_PYTHON_VERSION=3 \
       -DYARP_COMPILE_BINDINGS=ON \
       -DCREATE_PYTHON=ON \
-      -DENABLE_yarpcar_bayer=ON \
-      -DENABLE_yarpcar_mjpeg=ON \
-      -DENABLE_yarpmod_opencv_grabber=ON \
-      -DENABLE_yarpmod_serial=ON \
-      -DENABLE_yarpmod_serialport=ON \
+#      -DENABLE_yarpcar_bayer=ON \
+#      -DENABLE_yarpcar_mjpeg=ON \
+#      -DENABLE_yarpmod_opencv_grabber=ON \
+#      -DENABLE_yarpmod_serial=ON \
+#      -DENABLE_yarpmod_serialport=ON \
       .. && \
      make -j`nproc` && \
      make install && \
@@ -141,14 +145,12 @@ EXPOSE 10000/tcp 10000/udp
 # icub
 RUN cd /projects && git clone https://github.com/robotology/icub-main
 
-RUN apt-get install -y libglu1-mesa-dev freeglut3-dev mesa-common-dev  libwebp-dev libtiff5-dev
-RUN apt-get install -y mesa-utils freeglut3 libode-dev libsdl1.2-dev libgtk2.0-dev
 
 #RUN cd /projects/icub-main && git checkout 3f39401fcd26deaf5a571cf504bdd9894be4c981
  
 RUN cd /projects/icub-main && \
- #   git checkout $GIT_BRANCH &&\
-    git checkout 44f089fcb7ec6e0c63afa96818259b71a6818d25 && \
+    git checkout $GIT_BRANCH &&\
+#    git checkout 44f089fcb7ec6e0c63afa96818259b71a6818d25 && \
     mkdir build && cd build &&\
     cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
           -DCMAKE_INSTALL_PREFIX=./install \
@@ -191,7 +193,6 @@ ENV PYTHONPATH=$PYTHONPATH:/usr/local/lib/python3.5/dist-packages/:$YARP_LIB/pyt
 ENV QT_X11_NO_MITSHM 1
 
 # gpu support
-RUN apt-get install -y autoconf
 RUN cd /projects && \
   git clone https://github.com/NVIDIA/libglvnd.git && \
   cd libglvnd && \
