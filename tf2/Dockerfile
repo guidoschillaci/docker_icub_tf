@@ -15,7 +15,7 @@ RUN apt-add-repository "deb https://apt.kitware.com/ubuntu/ `lsb_release -cs` ma
 #RUN apt-get install -y kitware-archive-keyring 
 #RUN apt-key --keyring /etc/apt/trusted.gpg del C1F34CDD40CD72DA
 
-RUN add-apt-repository ppa:timsc/swig-3.0.12
+#RUN add-apt-repository ppa:timsc/swig-3.0.12
 RUN apt-get update -y
 
 RUN apt-get install -y lsb-release \
@@ -87,7 +87,7 @@ RUN ldconfig
 
 # YARP
 RUN cd /projects && \ 
-    git clone https://github.com/robotology/yarp.git -b v3.3.0 && cd yarp && \
+    git clone https://github.com/robotology/yarp.git -b v3.3.2 && cd yarp && \
     #git checkout $GIT_BRANCH && \
     #git checkout -b v3.3.0 \
     mkdir build && cd build && \
@@ -184,17 +184,28 @@ ENV LD_LIBRARY_PATH=$ICUB_LIB:$LD_LIBRARY_PATH
 
 ENV YARP_DATA_DIRS=$YARP_DATA_DIRS:$ICUB_DIR/share/iCub/
 
-ENV PYTHONPATH=$PYTHONPATH:$YARP_LIB/python3.6/site-packages/:$ICUB_LIB/python3.6/site-packages/:/usr/local/lib/python3.6/dist-packages/
+ENV PYTHONPATH=$PYTHONPATH:/usr/local/lib/python3.5/dist-packages/:$YARP_LIB/python3/dist-packages/:$ICUB_LIB/python3/dist-packages/
 
 # Some QT-Apps don't show controls without this
 ENV QT_X11_NO_MITSHM 1
 
+RUN apt-get install -y autoconf
+
 # gpu support
+RUN cd /projects && \
+  git clone https://github.com/NVIDIA/libglvnd.git && \
+  cd libglvnd && \
+  git reset --hard 9d909106f232209cf055428cae18387c18918704 && \
+  bash autogen.sh && bash configure && make -j`nproc` && \
+  make install
 ENV NVIDIA_VISIBLE_DEVICES=all
 ENV NVIDIA_DRIVER_CAPABILITIES=all
+ENV CUDA_HOME=/usr/local/cuda-9.0/
 
-RUN rm -rf /var/lib/apt/lists/*
+# CLEANUP
+RUN rm -rf /var/lib/apt/lists/*e
+
+RUN alias python=python3
 
 # Enable ccache, for faster recompilation
 ENV PATH=/usr/lib/ccache:$PATH
-
