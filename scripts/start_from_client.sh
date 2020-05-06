@@ -1,6 +1,6 @@
 # readapated from https://blog.yadutaf.fr/2017/09/10/running-a-graphical-app-in-a-docker-container-on-a-remote-server/
 # Open an SSH connection to the remote server
-ssh -X guido@192.168.1.163
+#ssh -X guido@192.168.1.163
 export DOCKER_CONTAINER_NAME=icub_container
 
 # Prepare target env
