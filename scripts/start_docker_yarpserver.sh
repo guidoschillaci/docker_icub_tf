@@ -1,25 +1,12 @@
-#xhost +local:root
 
-#ipclient=192.168.1.229
-#xhost +$ipclient:root
+if [ -z "$1" ]
+  then
+    echo "No argument supplied. I need an ip address of the client pc, or just localhost."
+    exit 1
+fi
 
-# get local ip address
-#function iplocal () {
-#  ip route get 8.8.8.8 | head -1 | cut -d' ' -f8
-#  ip -o route get to 8.8.8.8 | sed -n 's/.*src \([0-9.]\+\).*/\1/p'
-#}
-# get external ip address
-#function ipexternal () {
-#  curl --silent http://checkip.amazonaws.com        # or:  http://ipinfo.io/ip
-#}
-#function ipinfo () {
-#  echo "local    IP of this instance =>  $(iplocal)"
-#  echo "external IP of this instance =>  $(ipexternal)"
-#  echo "IP of the remote instance  =>  $ipclient"
-#}
+ipclient=$1
 
-
-#ipinfo
 
 export DOCKER_CONTAINER_NAME=icub_container
 if [ ! "$(docker ps -q -f name=${DOCKER_CONTAINER_NAME})" ]; then
@@ -40,7 +27,7 @@ if [ ! "$(docker ps -q -f name=${DOCKER_CONTAINER_NAME})" ]; then
       --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
       --volume="/home/guido/code:/code/:rw"  \
       guidoski/icub:tf1.12.3-gpu-py3 bash -c "
-             yarpserver --ip 172.19.0.2 --socket 10000 & yarpmanager
+             yarpserver --ip 172.19.0.2 --socket 10000 & iCub_SIM
              "
 #--volume="/home/guido/code:/code/" \
 #&
