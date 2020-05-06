@@ -211,3 +211,6 @@ RUN alias python=python3
 # Enable ccache, for faster recompilation
 ENV PATH=/usr/lib/ccache:$PATH
 
+RUN useradd -ms /bin/bash icub
+USER icub
+WORKDIR /home/icub
