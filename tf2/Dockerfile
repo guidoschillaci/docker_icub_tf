@@ -138,7 +138,8 @@ RUN yarp check
 EXPOSE 10000/tcp 10000/udp
 
 # icub
-RUN cd /projects && git clone https://github.com/robotology/icub-main
+#RUN cd /projects && git clone https://github.com/robotology/icub-main
+RUN cd /projects && git clone https://github.com/robotology/icub-main -b v1.16.0
 
 RUN apt-get install -y libglu1-mesa-dev freeglut3-dev mesa-common-dev  libwebp-dev libtiff5-dev
 RUN apt-get install -y mesa-utils freeglut3 libode-dev libsdl1.2-dev libgtk2.0-dev
@@ -146,7 +147,7 @@ RUN apt-get install -y mesa-utils freeglut3 libode-dev libsdl1.2-dev libgtk2.0-d
 #RUN cd /projects/icub-main && git checkout 3f39401fcd26deaf5a571cf504bdd9894be4c981
  
 RUN cd /projects/icub-main && \
-    git checkout $GIT_BRANCH &&\
+#    git checkout $GIT_BRANCH &&\
  #   git checkout 44f089fcb7ec6e0c63afa96818259b71a6818d25 && \
     mkdir build && cd build &&\
     cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
