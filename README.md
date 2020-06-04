@@ -18,6 +18,6 @@ sh scripts/run_icub_sim.sh 192.168.1.229
 
 If client is a MacOS, run before ssh the following command:
 
-'''
+```
 socat TCP-LISTEN:6000,reuseaddr,fork UNIX-CLIENT:\"$DISPLAY\"
-'''
+```
