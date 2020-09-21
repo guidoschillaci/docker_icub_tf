@@ -53,11 +53,6 @@ RUN apt-get install -y  coinor-libipopt-dev libgsl0-dev freeglut3-dev
 RUN apt-get install -y libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev \
     libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev  libdc1394-22-dev  libpopt-dev
 
-#RUN apt-get install -y python3-virtualenv
-#ENV VIRTUAL_ENV=/icub-py3-env
-#RUN python3 -m virtualenv --python=/usr/bin/python3 $VIRTUAL_ENV
-#ENV PATH="$VIRTUAL_ENV/bin:$PATH"
-
 RUN pip3 install numpy scipy matplotlib scikit-image scikit-learn ipython 
 
 RUN mkdir /projects
@@ -75,6 +70,7 @@ RUN cd /projects/opencv && \
     make -j`nproc` && make install && \
     cd
 
+
 # YCM
 RUN cd /projects && \
     git clone https://github.com/robotology/ycm.git && cd ycm && \
@@ -87,7 +83,7 @@ RUN ldconfig
 
 # YARP
 RUN cd /projects && \ 
-    git clone https://github.com/robotology/yarp.git -b v3.3.2 && cd yarp && \
+    git clone https://github.com/robotology/yarp.git && cd yarp && \
     #git checkout $GIT_BRANCH && \
     #git checkout -b v3.3.0 \
     mkdir build && cd build && \
@@ -139,7 +135,7 @@ EXPOSE 10000/tcp 10000/udp
 
 # icub
 #RUN cd /projects && git clone https://github.com/robotology/icub-main
-RUN cd /projects && git clone https://github.com/robotology/icub-main -b v1.16.0
+RUN cd /projects && git clone https://github.com/robotology/icub-main
 
 RUN apt-get install -y libglu1-mesa-dev freeglut3-dev mesa-common-dev  libwebp-dev libtiff5-dev
 RUN apt-get install -y mesa-utils freeglut3 libode-dev libsdl1.2-dev libgtk2.0-dev
@@ -175,6 +171,27 @@ RUN cd /projects/icub-main && \
     make -j`nproc` && make install && \
     cd
 
+RUN cd /projects && git clone https://github.com/robotology/icub-contrib-common
+RUN cd /projects/icub-contrib-common && \
+    mkdir build && cd build &&\
+    cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
+          -DCMAKE_INSTALL_PREFIX=./install \
+          -DICUB_SHARED_LIBRARY=ON \
+          -DICUB_COMPILE_BINDINGS=ON \
+          -DCREATE_PYTHON=ON \
+          -DICUB_USE_PYTHON_VERSION=3 \
+          .. && make -j`nproc` && make install && \
+    cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
+          -DCMAKE_INSTALL_PREFIX=./install \
+          -DICUB_SHARED_LIBRARY=ON \
+          -DICUB_COMPILE_BINDINGS=ON \
+          -DCREATE_PYTHON=ON \
+          -DICUB_USE_PYTHON_VERSION=3 \
+          .. && \ 
+    make -j`nproc` && make install && \
+    cd
+
+
 ENV ICUB_ROOT=/projects/icub-main 
 ENV ICUB_DIR=$ICUB_ROOT/build/install
 ENV ICUB_LIB=$ICUB_DIR/lib \
@@ -203,6 +220,8 @@ ENV NVIDIA_VISIBLE_DEVICES=all
 ENV NVIDIA_DRIVER_CAPABILITIES=all
 ENV CUDA_HOME=/usr/local/cuda-9.0/
 
+#RUN apt install -y python3-tk
+
 # CLEANUP
 RUN rm -rf /var/lib/apt/lists/*e
 
@@ -210,3 +229,4 @@ RUN alias python=python3
 
 # Enable ccache, for faster recompilation
 ENV PATH=/usr/lib/ccache:$PATH
+
