@@ -133,15 +133,21 @@ ENV LD_LIBRARY_PATH=$YARP_LIB:$LD_LIBRARY_PATH
 RUN yarp check
 EXPOSE 10000/tcp 10000/udp
 
-# icub
-#RUN cd /projects && git clone https://github.com/robotology/icub-main
-RUN cd /projects && git clone https://github.com/robotology/icub-main
 
 RUN apt-get install -y libglu1-mesa-dev freeglut3-dev mesa-common-dev  libwebp-dev libtiff5-dev
-RUN apt-get install -y mesa-utils freeglut3 libode-dev libsdl1.2-dev libgtk2.0-dev
+#RUN apt-get install -y mesa-utils freeglut3 libode-dev libsdl1.2-dev libgtk2.0-dev
+RUN apt-get install -y mesa-utils freeglut3 libsdl1.2-dev libgtk2.0-dev
 
-#RUN cd /projects/icub-main && git checkout 3f39401fcd26deaf5a571cf504bdd9894be4c981
- 
+RUN cd /projects/ && wget https://bitbucket.org/odedevs/ode/downloads/ode-0.16.2.tar.gz && \ 
+    tar -xzf ode-0.16.2.tar.gz && cd ode-0.16.2 && \
+    mkdir ode-build && cd ode-build && \
+    cmake .. && make -j`nproc` && make install && \
+    cd
+
+
+
+# icub
+RUN cd /projects && git clone https://github.com/robotology/icub-main 
 RUN cd /projects/icub-main && \
 #    git checkout $GIT_BRANCH &&\
  #   git checkout 44f089fcb7ec6e0c63afa96818259b71a6818d25 && \
@@ -167,8 +173,7 @@ RUN cd /projects/icub-main && \
           -DENABLE_icubmod_cartesiancontrollerclient=ON \
           -DENABLE_icubmod_cartesiancontrollerserver=ON \
           -DENABLE_icubmod_gazecontrollerclient=ON \
-          .. && \ 
-    make -j`nproc` && make install && \
+          .. && make -j`nproc` && make install && \
     cd
 
 RUN cd /projects && git clone https://github.com/robotology/icub-contrib-common
