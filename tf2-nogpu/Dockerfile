@@ -198,9 +198,10 @@ ENV ICUB_LIB=$ICUB_DIR/lib \
     ICUB_BIN=$ICUB_DIR/bin 
 ENV PATH=$ICUB_BIN:$PATH 
 ENV LD_LIBRARY_PATH=$ICUB_LIB:$LD_LIBRARY_PATH
+ENV ICUBcontrib_DIR=/projects/icub-contrib-common/build/install
 
 
-ENV YARP_DATA_DIRS=$YARP_DATA_DIRS:$ICUB_DIR/share/iCub/
+ENV YARP_DATA_DIRS=$YARP_DATA_DIRS:$ICUB_DIR/share/iCub/:$ICUBcontrib_DIR/share/ICUBcontrib
 
 ENV PYTHONPATH=$PYTHONPATH:/usr/local/lib/python3.5/dist-packages/:$YARP_LIB/python3/dist-packages/:$ICUB_LIB/python3/dist-packages/
 
