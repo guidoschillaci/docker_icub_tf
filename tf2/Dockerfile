@@ -78,7 +78,8 @@ RUN cd /projects/opencv && \
 # YCM
 RUN cd /projects && \
     git clone https://github.com/robotology/ycm.git && cd ycm && \
-    git checkout $GIT_BRANCH &&  mkdir build && cd build && \
+#    git checkout $GIT_BRANCH && \ 
+    mkdir build && cd build && \
     cmake .. && \
     make -j`nproc` && make install
 
